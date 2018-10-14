@@ -1,49 +1,59 @@
-import dna
+import organism
 from random import randint
+from random import random
 
-def mapping(value,leftMin, leftMax, rightMin, rightMax):
-    # Figure out how 'wide' each range is
-    leftSpan = float(leftMax - leftMin)
-    rightSpan = float(rightMax - rightMin)
-
-    # Convert the left range into a 0-1 range (float)
-    valueScaled = float(value - leftMin) / float(leftSpan)
-
-    # Convert the 0-1 range into a value in the right range.
-    return rightMin + (valueScaled * rightSpan)
-
+# class for creating a population
 class Population:
-	def __init__(self,p,m,num):
+
+	# constructor
+	def __init__(self,target,mutationRate,size):
+		# this is the list of all the organisms in a generation
 		self.population=[]
-		self.size=num
+		# matingPool of the population
 		self.matingPool=[]
+		# the size of a population
+		self.size=size
+		# this is the generation of the population
 		self.generations=0
+		# this takes care of the termination
 		self.finished=False
-		self.target=p
-		self.mutationRate=m
-		self.perfectScore=100
-		for i in range(0,num):
-			self.population.append(dna.Organism(len(self.target)))
-		self.matingPool=[]	
+		# this is the target that needs to match
+		self.target=target
+		self.mutationRate=mutationRate
+
+		# creating the first population GENERATION 1
+		for i in range(self.size):
+			self.population.append(organism.Organism(len(self.target)))	
+		# calculates the fitness of all the organisms
 		self.calcFitness()
 
 	def calcFitness(self):
 		for i in self.population:
 			i.fitnessFunction(self.target)
 	
+	# to select and mate according to an algorithm
 	def naturalSelection(self):
+		# creating a matingPool
 		self.matingPool=[]
 		maxFitness=0
+		
+		# to get the maxFitness
 		for i in self.population:
 			if maxFitness < i.fitness:
 				maxFitness=i.fitness
-		for i in self.population:
-			fitMap=mapping(i.fitness,0,maxFitness,0,1)
-			n=int(fitMap*100)
-			for j in range(0,n+1):
+		if maxFitness != 0.0:
+			for i in self.population:
+				fitness=(i.fitness)/(maxFitness)
+				n=round(fitness*100)
+				for j in range(n):
+					self.matingPool.append(i)
+		else:
+			for i in self.population:
 				self.matingPool.append(i)
 
+	# genrate the children and place them in the previous generation to make new generation
 	def generate(self):
+		# create children with pairs
 		for i in range (0,self.size):
 			a=randint(0,len(self.matingPool)-1)
 			b=randint(0,len(self.matingPool)-1)
@@ -56,7 +66,7 @@ class Population:
 			self.population[i]=child
 		self.generations+=1
 
-
+	# evaluates the whole generation's fitness
 	def evaluate(self):
 		worldRecord=0.0
 		index=0
@@ -64,8 +74,9 @@ class Population:
 			if self.population[i].fitness > worldRecord :
 				index = i
 				worldRecord = self.population[i].fitness
-		print("BEST ",self.population[index].genes)
+		printBest=''.join(self.population[index].genes)		
+		print("BEST ",printBest)
 		print("BEST FITNESS ",worldRecord)
 		print("GENERATION",self.generations)
-		if int(worldRecord) == self.perfectScore :
-			self.finished=true
+		if worldRecord == 100.0 :
+			self.finished=True

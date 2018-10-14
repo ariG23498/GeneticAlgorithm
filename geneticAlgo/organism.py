@@ -6,8 +6,13 @@ from random import random
 
 
 # returns a new Caps Charater only
-def newChar():	
-	return chr(randint(65,90))
+def newChar():
+	c=randint(63,122)
+	if c == 63 :
+		c=32
+	if c == 64:
+		c=46	
+	return chr(c)
 
 
 
