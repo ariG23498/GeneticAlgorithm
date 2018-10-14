@@ -1,21 +1,31 @@
+# Aritra Roy Gosthipaty
+# this module deals with the building of an organism
+
 from random import randint
-from random import uniform
+from random import random
 
-def newChar():
-	c=chr(randint(65,90))
-	return c	
 
+# returns a new Caps Charater only
+def newChar():	
+	return chr(randint(65,90))
+
+
+
+# class for an organism		
 class Organism:
+
+	# constructor
 	def __init__(self,num):
 		self.num=num
+		# num here is the number of genes of the organism
 		self.genes=[]
+		# this is a list for all the genes of the organism
 		self.fitness=0
+		# every organism has a fitness associated with it
 		for i in range(0,num):
 			self.genes.append(newChar())
 
-	def getPhrase(self):
-		self.genes=''.join(self.genes)
-
+	# calculates the fitness of the organism
 	def fitnessFunction(self,target):
 		count=0
 		for i in range(0,self.num):
@@ -23,17 +33,20 @@ class Organism:
 				count+=1
 		self.fitness=(count/self.num)*100
 
+	#this is the crossover to make a child method 
 	def crossover(self,partner):
 		child=Organism(self.num)
-		midpoint=randint(0,self.num-1)
+		midpoint=randint(0,self.num-1) 
+		# randint(a,b) a<=value<=b
 		for i in range(self.num):
 			if i <= midpoint:
 				child.genes[i]=(self.genes[i])
 			else:
 				child.genes[i]=(partner.genes[i])
 		return child
-					
+	
+	#mutates the child with a mutation rate 
 	def mutation(self,mutationRate):
 		for i in range(0,self.num):
-			if uniform(0,1) < mutationRate:
+			if random() < mutationRate:
 				self.genes[i]=newChar()
