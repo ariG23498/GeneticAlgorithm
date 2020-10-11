@@ -22,14 +22,17 @@ class Population:
 		self.mutationRate=mutationRate
 
 		# creating the first population GENERATION 1
-		for i in range(self.size):
+		# can be thought of as the setup function
+		for idx in range(self.size):
 			self.population.append(organism.Organism(len(self.target)))	
 		# calculates the fitness of all the organisms
 		self.calcFitness()
 
 	def calcFitness(self):
-		for i in self.population:
-			i.fitnessFunction(self.target)
+		# This function is used to calculate the fitness of all
+		# the individuals of the population.
+		for individuals in self.population:
+			individuals.fitnessFunction(self.target)
 	
 	# to select and mate according to an algorithm
 	def naturalSelection(self):
@@ -38,20 +41,21 @@ class Population:
 		maxFitness=0
 		
 		# to get the maxFitness
-		for i in self.population:
-			if maxFitness < i.fitness:
-				maxFitness=i.fitness
+		for individuals in self.population:
+			if maxFitness < individuals.fitness:
+				maxFitness=individuals.fitness
 		if maxFitness != 0.0:
-			for i in self.population:
-				fitness=(i.fitness)/(maxFitness)
+			for individuals in self.population:
+				fitness=(individuals.fitness)/(maxFitness)
 				n=round(fitness*100)
 				for j in range(n):
 					self.matingPool.append(i)
 		else:
-			for i in self.population:
-				self.matingPool.append(i)
+			for individuals in self.population:
+				self.matingPool.append(individuals)
 
-	# genrate the children and place them in the previous generation to make new generation
+	# genrate the children and place them in the previous generation
+	# to make new generation
 	def generate(self):
 		# create children with pairs
 		for i in range (0,self.size):
